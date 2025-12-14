@@ -434,7 +434,6 @@
         <p class="subtitle">Создай уникальный ник для игр и социальных сетей</p>
 
         <form id="nicknameForm">
-            <!-- Стиль никнейма -->
             <div class="form-group">
                 <label>Стиль никнейма</label>
                 <div class="style-selector">
@@ -445,7 +444,6 @@
                 </div>
             </div>
 
-            <!-- Опции генерации -->
             <div class="form-group">
                 <label>Опции</label>
                 <div class="checkbox-group">
@@ -464,7 +462,6 @@
                 </div>
             </div>
 
-            <!-- Длина никнейма -->
             <div class="form-group">
                 <div class="slider-value">
                     <label for="length">Длина никнейма</label>
@@ -477,11 +474,10 @@
             <div class="button-group">
                 <button type="button" id="generateBtn" class="btn-generate">Сгенерировать 🎲</button>
                 <button type="button" id="copyBtn" class="btn-copy" style="display: none;">Скопировать 📋</button>
-                <button type="button" id="batchBtn" class="btn-batch" style="display: none;">Пакет (5) 📚</button>
+                <button type="button" id="batchBtn" class="btn-batch" style="display: none;">Побольше (5) 📚</button>
             </div>
         </form>
 
-        <!-- Результат -->
         <div class="result-section" id="resultSection">
             <div class="result-label">Ваш никнейм</div>
             <div class="nickname-display" id="nicknameDisplay"></div>
@@ -499,7 +495,6 @@
             <div class="copy-feedback" id="copyFeedback">✓ Скопировано в буфер обмена!</div>
         </div>
 
-        <!-- Пакетный результат -->
         <div class="result-section" id="batchSection" style="display: none;">
             <div class="result-label">Сгенерированные никнеймы</div>
             <div class="batch-nicknames" id="batchNicknames"></div>
@@ -510,7 +505,6 @@
     </div>
 
     <script>
-        // Словари для разных стилей
         const nicknameDictionaries = {
             casual: {
                 prefixes: ['Cool', 'Chill', 'Sleepy', 'Happy', 'Lucky', 'Quick', 'Smart', 'Bright', 'Sharp', 'Swift'],
@@ -537,12 +531,10 @@
         let currentNickname = '';
         let selectedStyle = 'casual';
 
-        // Обновление отображения длины
         document.getElementById('length').addEventListener('input', (e) => {
             document.getElementById('lengthValue').textContent = e.target.value;
         });
 
-        // Выбор стиля
         document.querySelectorAll('.style-option').forEach(option => {
             option.addEventListener('click', () => {
                 document.querySelectorAll('.style-option').forEach(o => o.classList.remove('active'));
@@ -551,17 +543,14 @@
             });
         });
 
-        // Функция для генерации случайного числа
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        // Функция для получения случайного элемента из массива
         function getRandomElement(arr) {
             return arr[Math.floor(Math.random() * arr.length)];
         }
 
-        // Функция для генерации никнейма
         function generateNickname() {
             const length = parseInt(document.getElementById('length').value);
             const withNumbers = document.getElementById('withNumbers').checked;
@@ -571,7 +560,6 @@
             const dict = nicknameDictionaries[selectedStyle];
             let nickname = '';
 
-            // Случайно выбираем способ генерации
             const method = Math.random();
 
             if (method < 0.4) {
@@ -608,7 +596,6 @@
             return nickname;
         }
 
-        // Функция для оценки "крутости"
         function rateNickname(nickname) {
             let score = 0;
             const styleScores = { casual: 15, epic: 25, tech: 20, fantasy: 22 };
@@ -624,7 +611,6 @@
             return { level: 'legendary', label: '⭐ Легендарный' };
         }
 
-        // Генерация никнейма
         document.getElementById('generateBtn').addEventListener('click', () => {
             try {
                 currentNickname = generateNickname();
@@ -648,7 +634,6 @@
             }
         });
 
-        // Копирование в буфер обмена
         document.getElementById('copyBtn').addEventListener('click', () => {
             navigator.clipboard.writeText(currentNickname).then(() => {
                 const feedback = document.getElementById('copyFeedback');
@@ -657,7 +642,6 @@
             }).catch(() => showError('Не удалось скопировать в буфер обмена'));
         });
 
-        // Пакетная генерация
         document.getElementById('batchBtn').addEventListener('click', () => {
             try {
                 const nicknames = [];
@@ -687,7 +671,6 @@
             }
         });
 
-        // Функция для копирования текста
         window.copyToClipboard = function(text) {
             navigator.clipboard.writeText(text).then(() => {
                 const feedback = document.getElementById('batchCopyFeedback');
@@ -696,14 +679,12 @@
             });
         };
 
-        // Функция для отображения ошибки
         function showError(message) {
             const errorEl = document.getElementById('errorMessage');
             errorEl.textContent = message;
             errorEl.classList.add('show');
         }
 
-        // Генерация при загрузке
         document.getElementById('generateBtn').click();
     </script>
 </body>
