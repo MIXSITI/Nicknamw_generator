@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор Никнеймов</title>
+    <style>
+        :root {
+            --color-primary: #2E86AB;
+            --color-primary-hover: #1B5E8F;
+            --color-success: #06A77D;
+            --color-warning: #D62828;
+            --color-bg: #F5F5F5;
+            --color-surface: #FFFFFF;
+            --color-text: #1F1F1F;
+            --color-text-secondary: #666666;
+            --color-border: #E0E0E0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--color-surface);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--color-text-secondary);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--color-text);
+            font-size: 14px;
+        }
+
+        .style-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .style-option {
+            padding: 12px;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            background: var(--color-bg);
+        }
+
+        .style-option:hover {
+            border-color: var(--color-primary);
+            background: #f0f7ff;
+        }
+
+        .style-option.active {
+            border-color: var(--color-primary);
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            background: var(--color-bg);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--color-primary);
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 400;
+            font-size: 14px;
+        }
+
+        .slider-container {
+            margin-bottom: 20px;
+        }
+
+        .slider-value {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .slider-value span {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--color-border);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--color-primary-hover);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s ease;
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-generate {
+            background: var(--color-primary);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-generate:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 134, 171, 0.4);
+        }
+
+        .btn-generate:active {
+            transform: translateY(0);
+        }
+
+        .btn-copy {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .btn-copy:hover {
+            background: #048566;
+            transform: translateY(-2px);
+        }
+
+        .btn-batch {
+            background: #FF6B6B;
+            color: white;
+        }
+
+        .btn-batch:hover {
+            background: #ee5a52;
+            transform: translateY(-2px);
+        }
+
+        .result-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--color-bg);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .result-section.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .nickname-display {
+            background: var(--color-surface);
+            border: 2px solid var(--color-primary);
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--color-primary);
+            word-break: break-all;
+            margin-bottom: 12px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .batch-nicknames {
+            background: var(--color-surface);
+            border: 2px solid var(--color-primary);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .batch-item {
+            padding: 8px;
+            margin-bottom: 6px;
+            background: var(--color-bg);
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .batch-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .batch-item-copy {
+            background: none;
+            border: none;
+            color: var(--color-primary);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .batch-item-copy:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+            font-size: 12px;
+        }
+
+        .stat-item {
+            background: var(--color-surface);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 3px solid var(--color-primary);
+        }
+
+        .stat-label {
+            color: var(--color-text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            color: var(--color-primary);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .rating-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .rating-boring { background: #FFE5E5; color: #D62828; }
+        .rating-cool { background: #E5F3FF; color: #2E86AB; }
+        .rating-awesome { background: #FFE5B4; color: #FF6B6B; }
+        .rating-legendary { background: #E5F3E5; color: #06A77D; }
+
+        .copy-feedback {
+            display: none;
+            background: var(--color-success);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            text-align: center;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .copy-feedback.show {
+            display: block;
+        }
+
+        .error-message {
+            background: #ffe0e0;
+            color: var(--color-warning);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 13px;
+            display: none;
+            border-left: 3px solid var(--color-warning);
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .style-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-generate {
+                grid-column: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Генератор Никнеймов</h1>
+        <p class="subtitle">Создай уникальный ник для игр и социальных сетей</p>
+
+        <form id="nicknameForm">
+            <!-- Стиль никнейма -->
+            <div class="form-group">
+                <label>Стиль никнейма</label>
+                <div class="style-selector">
+                    <div class="style-option active" data-style="casual">😎 Casual</div>
+                    <div class="style-option" data-style="epic">⚔️ Epic</div>
+                    <div class="style-option" data-style="tech">💻 Tech</div>
+                    <div class="style-option" data-style="fantasy">🧙 Fantasy</div>
+                </div>
+            </div>
+
+            <!-- Опции генерации -->
+            <div class="form-group">
+                <label>Опции</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="withNumbers" checked>
+                        <label for="withNumbers">Добавить цифры</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="withSymbols">
+                        <label for="withSymbols">Добавить символы (_-)</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mixedCase">
+                        <label for="mixedCase">Смешанный регистр</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Длина никнейма -->
+            <div class="form-group">
+                <div class="slider-value">
+                    <label for="length">Длина никнейма</label>
+                    <span id="lengthValue">10</span>
+                </div>
+                <input type="range" id="length" min="5" max="30" value="10">
+            </div>
+
+            <!-- Кнопки -->
+            <div class="button-group">
+                <button type="button" id="generateBtn" class="btn-generate">Сгенерировать 🎲</button>
+                <button type="button" id="copyBtn" class="btn-copy" style="display: none;">Скопировать 📋</button>
+                <button type="button" id="batchBtn" class="btn-batch" style="display: none;">Пакет (5) 📚</button>
+            </div>
+        </form>
+
+        <!-- Результат -->
+        <div class="result-section" id="resultSection">
+            <div class="result-label">Ваш никнейм</div>
+            <div class="nickname-display" id="nicknameDisplay"></div>
+            <div id="ratingBadge"></div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">Длина</div>
+                    <div class="stat-value" id="statLength">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Стиль</div>
+                    <div class="stat-value" id="statStyle">-</div>
+                </div>
+            </div>
+            <div class="copy-feedback" id="copyFeedback">✓ Скопировано в буфер обмена!</div>
+        </div>
+
+        <!-- Пакетный результат -->
+        <div class="result-section" id="batchSection" style="display: none;">
+            <div class="result-label">Сгенерированные никнеймы</div>
+            <div class="batch-nicknames" id="batchNicknames"></div>
+            <div class="copy-feedback" id="batchCopyFeedback">✓ Скопировано в буфер обмена!</div>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+    </div>
+
+    <script>
+        // Словари для разных стилей
+        const nicknameDictionaries = {
+            casual: {
+                prefixes: ['Cool', 'Chill', 'Sleepy', 'Happy', 'Lucky', 'Quick', 'Smart', 'Bright', 'Sharp', 'Swift'],
+                suffixes: ['Dude', 'Guy', 'Player', 'Master', 'King', 'Pro', 'Star', 'Hero', 'Legend', 'Ninja'],
+                words: ['Fox', 'Wolf', 'Bear', 'Eagle', 'Tiger', 'Dragon', 'Phoenix', 'Storm', 'Thunder', 'Shadow']
+            },
+            epic: {
+                prefixes: ['Dark', 'Void', 'Chaos', 'Ancient', 'Mystical', 'Eternal', 'Cosmic', 'Infinite', 'Deadly', 'Cursed'],
+                suffixes: ['Slayer', 'Reaper', 'Destroyer', 'Warrior', 'Assassin', 'Blade', 'Fury', 'Wrath', 'Doom', 'Abyss'],
+                words: ['Demon', 'Dragon', 'Necro', 'Spectre', 'Phantom', 'Venom', 'Inferno', 'Blaze', 'Hex', 'Curse']
+            },
+            tech: {
+                prefixes: ['Cyber', 'Pixel', 'Nano', 'Quantum', 'Digital', 'Binary', 'Hex', 'Byte', 'Code', 'Sync'],
+                suffixes: ['Bot', 'Core', 'Net', 'Code', 'Sync', 'Ware', 'Tech', 'Matrix', 'Grid', 'System'],
+                words: ['Nexus', 'Protocol', 'Algorithm', 'Vector', 'Kernel', 'Cache', 'Router', 'Socket', 'Signal', 'Node']
+            },
+            fantasy: {
+                prefixes: ['Elf', 'Dark', 'Mystic', 'Ancient', 'Royal', 'Silver', 'Golden', 'Crystal', 'Shadow', 'Twilight'],
+                suffixes: ['Mage', 'Seeker', 'Wanderer', 'Guardian', 'Sentinel', 'Knight', 'Sage', 'Lore', 'Oath', 'Spirit'],
+                words: ['Elven', 'Druid', 'Wizard', 'Paladin', 'Ranger', 'Rogue', 'Archer', 'Mage', 'Cleric', 'Bard']
+            }
+        };
+
+        let currentNickname = '';
+        let selectedStyle = 'casual';
+
+        // Обновление отображения длины
+        document.getElementById('length').addEventListener('input', (e) => {
+            document.getElementById('lengthValue').textContent = e.target.value;
+        });
+
+        // Выбор стиля
+        document.querySelectorAll('.style-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.style-option').forEach(o => o.classList.remove('active'));
+                option.classList.add('active');
+                selectedStyle = option.dataset.style;
+            });
+        });
+
+        // Функция для генерации случайного числа
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Функция для получения случайного элемента из массива
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // Функция для генерации никнейма
+        function generateNickname() {
+            const length = parseInt(document.getElementById('length').value);
+            const withNumbers = document.getElementById('withNumbers').checked;
+            const withSymbols = document.getElementById('withSymbols').checked;
+            const mixedCase = document.getElementById('mixedCase').checked;
+
+            const dict = nicknameDictionaries[selectedStyle];
+            let nickname = '';
+
+            // Случайно выбираем способ генерации
+            const method = Math.random();
+
+            if (method < 0.4) {
+                nickname = getRandomElement(dict.prefixes) + getRandomElement(dict.words);
+            } else if (method < 0.7) {
+                nickname = getRandomElement(dict.words) + getRandomElement(dict.suffixes);
+            } else {
+                nickname = getRandomElement(dict.prefixes) + 
+                          getRandomElement(dict.words) + 
+                          getRandomElement(dict.suffixes);
+            }
+
+            nickname = nickname.substring(0, length);
+
+            if (withNumbers && nickname.length < length) {
+                while (nickname.length < length) {
+                    nickname += getRandomInt(0, 9);
+                }
+            }
+
+            if (withSymbols && nickname.length < length) {
+                const symbols = ['_', '-'];
+                while (nickname.length < length) {
+                    nickname += getRandomElement(symbols);
+                }
+            }
+
+            if (mixedCase) {
+                nickname = nickname.split('').map(char => {
+                    return Math.random() > 0.5 ? char.toUpperCase() : char.toLowerCase();
+                }).join('');
+            }
+
+            return nickname;
+        }
+
+        // Функция для оценки "крутости"
+        function rateNickname(nickname) {
+            let score = 0;
+            const styleScores = { casual: 15, epic: 25, tech: 20, fantasy: 22 };
+            score += styleScores[selectedStyle] || 15;
+            score += nickname.length * 2;
+            if (/\d/.test(nickname)) score += 10;
+            if (/[_\-]/.test(nickname)) score += 15;
+            if (/[A-Z]/.test(nickname) && /[a-z]/.test(nickname)) score += 10;
+
+            if (score < 40) return { level: 'boring', label: '😴 Скучный' };
+            if (score < 60) return { level: 'cool', label: '😎 Крутой' };
+            if (score < 80) return { level: 'awesome', label: '🔥 Потрясающий' };
+            return { level: 'legendary', label: '⭐ Легендарный' };
+        }
+
+        // Генерация никнейма
+        document.getElementById('generateBtn').addEventListener('click', () => {
+            try {
+                currentNickname = generateNickname();
+                const rating = rateNickname(currentNickname);
+
+                document.getElementById('nicknameDisplay').textContent = currentNickname;
+                document.getElementById('statLength').textContent = currentNickname.length;
+                document.getElementById('statStyle').textContent = 
+                    selectedStyle.charAt(0).toUpperCase() + selectedStyle.slice(1);
+                
+                const ratingBadge = document.getElementById('ratingBadge');
+                ratingBadge.innerHTML = `<div class="rating-badge rating-${rating.level}">${rating.label}</div>`;
+                
+                document.getElementById('resultSection').classList.add('show');
+                document.getElementById('batchSection').style.display = 'none';
+                document.getElementById('copyBtn').style.display = 'flex';
+                document.getElementById('batchBtn').style.display = 'flex';
+                document.getElementById('errorMessage').classList.remove('show');
+            } catch (error) {
+                showError('Ошибка при генерации никнейма: ' + error.message);
+            }
+        });
+
+        // Копирование в буфер обмена
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(currentNickname).then(() => {
+                const feedback = document.getElementById('copyFeedback');
+                feedback.classList.add('show');
+                setTimeout(() => feedback.classList.remove('show'), 2000);
+            }).catch(() => showError('Не удалось скопировать в буфер обмена'));
+        });
+
+        // Пакетная генерация
+        document.getElementById('batchBtn').addEventListener('click', () => {
+            try {
+                const nicknames = [];
+                for (let i = 0; i < 5; i++) {
+                    nicknames.push(generateNickname());
+                }
+
+                const batchContainer = document.getElementById('batchNicknames');
+                batchContainer.innerHTML = '';
+
+                nicknames.forEach(nick => {
+                    const item = document.createElement('div');
+                    item.className = 'batch-item';
+                    item.innerHTML = `
+                        <span>${nick}</span>
+                        <button class="batch-item-copy" onclick="copyToClipboard('${nick}')">Скопировать</button>
+                    `;
+                    batchContainer.appendChild(item);
+                });
+
+                document.getElementById('resultSection').style.display = 'none';
+                document.getElementById('batchSection').style.display = 'block';
+                document.getElementById('batchSection').classList.add('show');
+                document.getElementById('errorMessage').classList.remove('show');
+            } catch (error) {
+                showError('Ошибка при генерации: ' + error.message);
+            }
+        });
+
+        // Функция для копирования текста
+        window.copyToClipboard = function(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const feedback = document.getElementById('batchCopyFeedback');
+                feedback.classList.add('show');
+                setTimeout(() => feedback.classList.remove('show'), 2000);
+            });
+        };
+
+        // Функция для отображения ошибки
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        // Генерация при загрузке
+        document.getElementById('generateBtn').click();
+    </script>
+</body>
+</html>
